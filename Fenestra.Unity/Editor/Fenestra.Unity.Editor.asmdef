@@ -1,0 +1,19 @@
+{
+    "name": "Fenestra.Unity.Editor",
+    "rootNamespace": "Fenestra.Unity.Editor",
+    "references": [
+        "Fenestra.Unity",
+        "Fenestra"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

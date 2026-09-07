@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="VirtualList/VirtualList.csproj" />
-  <Project Path="VirtualList.Tests/VirtualList.Tests.csproj" />
-</Solution>

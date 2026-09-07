@@ -1,0 +1,69 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <!--
+      Fenestra.Unity：Unity (UGUI) 适配层（运行时），标准 C# 类库。
+      经 UPM git URL 分发（Unity 用户 Add package from git URL），本 csproj 仅用于本机编译验证；
+      Editor 预览代码（Editor/）仅供 Unity 编译（见下方 Compile Remove），不参与本构建。
+      宿主 Unity 工程须自行提供 Fenestra（核心）与 UniTask / R3 / ObservableCollections 依赖。
+      UnityEngine 程序集仅编译期引用（本机 Unity 安装路径），实际链接由宿主 Unity 工程提供。
+      若本机 Unity 版本/路径不同，请调整 UnityManagedDir / UnityUguiDir。
+    -->
+
+    <PropertyGroup>
+        <!-- netstandard2.1：与 Unity 2022.3 的 .NET Standard 2.1 脚本运行时对齐（其 UnityEngine 程序集要求该版本）。 -->
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>Fenestra.Unity</AssemblyName>
+        <RootNamespace>Fenestra.Unity</RootNamespace>
+        <!-- CS0649：Unity 序列化字段由 Inspector 赋值，编译器无法感知，属预期。 -->
+        <NoWarn>$(NoWarn);0649</NoWarn>
+
+        <!-- NuGet 包元数据（dotnet pack / 发布用）。 -->
+        <PackageId>Fenestra.Unity</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Fenestra</Authors>
+        <Description>Unity (UGUI) adapter for the engine-agnostic Fenestra core: virtualized list/grid with fixed/variable sizing, reverse layout, inertia and elastic overflow.</Description>
+        <PackageTags>unity;ugui;virtual-list;virtualization;scroll</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+
+        <!-- 本机 Unity 编译期程序集路径。 -->
+        <UnityManagedDir>C:\Program Files\Unity\Hub\Editor\2022.3.62f3c1\Editor\Data\Managed</UnityManagedDir>
+        <UnityUguiDir>C:\Users\EDY\projects\mining\dbb\Library\ScriptAssemblies</UnityUguiDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Editor 预览代码仅供 Unity（UPM git URL 分发），不参与本机 dotnet 构建。 -->
+        <Compile Remove="Editor\**\*.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Fenestra\Fenestra.csproj"/>
+        <PackageReference Include="UniTask" Version="2.5.11"/>
+        <PackageReference Include="ObservableCollections" Version="3.3.4"/>
+        <PackageReference Include="ObservableCollections.R3" Version="3.3.4"/>
+        <PackageReference Include="R3" Version="1.3.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="UnityEngine">
+            <HintPath>$(UnityManagedDir)\UnityEngine\UnityEngine.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>$(UnityManagedDir)\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule">
+            <HintPath>$(UnityManagedDir)\UnityEngine\UnityEngine.UIModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>$(UnityUguiDir)\UnityEngine.UI.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+</Project>

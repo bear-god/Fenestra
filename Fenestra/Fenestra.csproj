@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <AssemblyName>Fenestra</AssemblyName>
+        <RootNamespace>Fenestra</RootNamespace>
+
+        <!-- NuGet 包元数据（dotnet pack / 发布用）。 -->
+        <PackageId>Fenestra</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Fenestra</Authors>
+        <Description>Engine-agnostic virtualized list/grid core: instantiates only the visible window (plus overscan); fixed/variable sizing, reverse layout, inertia and elastic overflow. Adapters: Fenestra.Unity (UGUI).</Description>
+        <PackageTags>virtualization;virtual-list;scroll;list;grid</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="UniTask" Version="2.5.11"/>
+        <PackageReference Include="ObservableCollections" Version="3.3.4"/>
+        <PackageReference Include="ObservableCollections.R3" Version="3.3.4"/>
+        <PackageReference Include="R3" Version="1.3.1"/>
+    </ItemGroup>
+
+</Project>
