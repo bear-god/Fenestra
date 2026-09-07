@@ -12,8 +12,8 @@ internal static class TestListFactory
     /// <returns>编排器与桩依赖。</returns>
     public static (VirtualListCore List, StubItemProvider Provider, StubLogger Logger) Create(
         VirtualListConfig config,
-        StubItemProvider provider = null,
-        StubLogger logger = null)
+        StubItemProvider? provider = null,
+        StubLogger? logger = null)
     {
         provider ??= new StubItemProvider();
         logger ??= new StubLogger();

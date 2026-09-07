@@ -270,7 +270,7 @@ public class VirtualListCoreLifecycleTests : VirtualListCoreTestBase
     {
         var (list, provider, logger) = CreateList(
             TestListFactory.FixedConfig(),
-            new StubItemProvider(_ => null));
+            new StubItemProvider(_ => null!));
         BindInts(list, 100);
 
         Assert.That(provider.GetCount, Is.GreaterThan(0));

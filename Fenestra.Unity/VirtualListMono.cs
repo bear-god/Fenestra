@@ -38,45 +38,45 @@ public sealed class VirtualListMono : MonoBehaviour,
     IDragHandler,
     IPointerUpHandler
 {
-    /// <summary>列表配置（Inspector 序列化，经 ToCore 转核心配置）。</summary>
+    /// <summary>列表配置（Inspector 序列化，经 ToCore 转核心配置；初始化前可为 null）。</summary>
     [SerializeField]
-    private VirtualListMonoConfig _config;
+    private VirtualListMonoConfig? _config;
 
-    /// <summary>item 预制件（根节点须实现 <see cref="IItemView" />）。</summary>
+    /// <summary>item 预制件（根节点须实现 <see cref="IItemView" />；初始化前可为 null）。</summary>
     [SerializeField]
-    private GameObject _itemPrefab;
+    private GameObject? _itemPrefab;
 
     private Vector2 _appliedContentSize = new(float.NaN, float.NaN);
     private float _appliedOffset = float.NaN;
-    private RectTransform _content;
+    private RectTransform? _content;
 
     private bool _disposed;
-    private DirectItemProvider _provider;
-    private RectTransform _viewport;
+    private DirectItemProvider? _provider;
+    private RectTransform? _viewport;
 
-    /// <summary>只读暴露核心编排器（诊断 / 高级用途）。</summary>
-    public VirtualListCore Core { get; private set; }
+    /// <summary>只读暴露核心编排器（诊断 / 高级用途；初始化前为 null）。</summary>
+    public VirtualListCore? Core { get; private set; }
 
-    /// <summary>只读暴露 Inspector 配置（编辑器布局预览 / 诊断用途）。</summary>
-    public VirtualListMonoConfig Config => _config;
+    /// <summary>只读暴露 Inspector 配置（编辑器布局预览 / 诊断用途；初始化前可为 null）。</summary>
+    public VirtualListMonoConfig? Config => _config;
 
     /// <summary>可见窗口流（首 / 尾可见 index，与元素级 OnShow / OnHide 同源）。</summary>
-    public Observable<VisibleWindow> VisibleWindowChanged => Core?.VisibleWindowChanged;
+    public Observable<VisibleWindow>? VisibleWindowChanged => Core?.VisibleWindowChanged;
 
     /// <summary>滚动到顶事件流（跨越边界时刻触发一次）。</summary>
-    public Observable<Unit> ReachedTop => Core?.ReachedTop;
+    public Observable<Unit>? ReachedTop => Core?.ReachedTop;
 
     /// <summary>滚动到底事件流（跨越边界时刻触发一次）。</summary>
-    public Observable<Unit> ReachedBottom => Core?.ReachedBottom;
+    public Observable<Unit>? ReachedBottom => Core?.ReachedBottom;
 
     /// <summary>是否已完成初始化。</summary>
     public bool Initialized { get; private set; }
 
     /// <summary>当前生效主轴（优先取核心配置；运行时经 <see cref="ApplyConfig" /> 可变化）。</summary>
-    private VirtualListAxis Axis => Core != null ? Core.Config.Axis : _config.Axis;
+    private VirtualListAxis Axis => Core != null ? Core.Config.Axis : _config!.Axis;
 
     /// <summary>当前生效尺寸模式（优先取核心配置）。</summary>
-    private VirtualListItemSizeMode SizeMode => Core != null ? Core.Config.SizeMode : _config.SizeMode;
+    private VirtualListItemSizeMode SizeMode => Core != null ? Core.Config.SizeMode : _config!.SizeMode;
 
     private void Awake()
     {
@@ -176,7 +176,7 @@ public sealed class VirtualListMono : MonoBehaviour,
 
         // content 需先于 provider 创建：元素作为 content 子节点，随滚动偏移整体移动。
         SetupContent();
-        _provider = new DirectItemProvider(_itemPrefab, _content);
+        _provider = new DirectItemProvider(_itemPrefab!, _content!);
         Core = new VirtualListCore(_config.ToCore(), _provider);
         Initialized = true;
         EnsureMask();
@@ -189,8 +189,8 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="collection">响应式集合。</param>
     public void Bind<T>(IReadOnlyObservableList<T> collection)
     {
-        EnsureInitialized();
-        Core.Bind(collection);
+        var core = EnsureInitialized();
+        core.Bind(collection);
         ApplyContentPosition();
     }
 
@@ -211,8 +211,8 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="config">新列表配置（Grid + 变高非法抛异常）。</param>
     public void ApplyConfig(VirtualListConfig config)
     {
-        EnsureInitialized();
-        Core.ApplyConfig(config);
+        var core = EnsureInitialized();
+        core.ApplyConfig(config);
         InjectDefaultItemSize();
         PushViewportSize();
         ApplyContentPosition();
@@ -222,8 +222,8 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="axis">新主轴。</param>
     public void SetAxis(VirtualListAxis axis)
     {
-        EnsureInitialized();
-        Core.SetAxis(axis);
+        var core = EnsureInitialized();
+        core.SetAxis(axis);
         InjectDefaultItemSize();
         PushViewportSize();
         ApplyContentPosition();
@@ -233,16 +233,16 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="reversed">是否沿主轴反向排列。</param>
     public void SetReversed(bool reversed)
     {
-        EnsureInitialized();
-        Core.SetReversed(reversed);
+        var core = EnsureInitialized();
+        core.SetReversed(reversed);
     }
 
     /// <summary>运行时设置初始滚动锚点（偏移最小值 / 偏移最大值；改变即重新定位到新锚点）。</summary>
     /// <param name="anchor">新初始锚点。</param>
     public void SetInitialAnchor(VirtualListInitialAnchor anchor)
     {
-        EnsureInitialized();
-        Core.SetInitialAnchor(anchor);
+        var core = EnsureInitialized();
+        core.SetInitialAnchor(anchor);
         ApplyContentPosition();
     }
 
@@ -250,8 +250,8 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="mode">新尺寸模式。</param>
     public void SetSizeMode(VirtualListItemSizeMode mode)
     {
-        EnsureInitialized();
-        Core.SetSizeMode(mode);
+        var core = EnsureInitialized();
+        core.SetSizeMode(mode);
         InjectDefaultItemSize();
         ApplyContentPosition();
     }
@@ -260,8 +260,8 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="size">新定高尺寸。</param>
     public void SetFixedItemSize(float size)
     {
-        EnsureInitialized();
-        Core.SetFixedItemSize(size);
+        var core = EnsureInitialized();
+        core.SetFixedItemSize(size);
         ApplyContentPosition();
     }
 
@@ -269,8 +269,8 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="spacing">新间距。</param>
     public void SetSpacing(float spacing)
     {
-        EnsureInitialized();
-        Core.SetSpacing(spacing);
+        var core = EnsureInitialized();
+        core.SetSpacing(spacing);
         ApplyContentPosition();
     }
 
@@ -278,24 +278,24 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="overscan">新过扫描。</param>
     public void SetOverscan(int overscan)
     {
-        EnsureInitialized();
-        Core.SetOverscan(overscan);
+        var core = EnsureInitialized();
+        core.SetOverscan(overscan);
     }
 
     /// <summary>运行时切换越界行为（O(1)，不触发重排）。</summary>
     /// <param name="overflow">新越界行为。</param>
     public void SetOverflow(VirtualListOverflow overflow)
     {
-        EnsureInitialized();
-        Core.SetOverflow(overflow);
+        var core = EnsureInitialized();
+        core.SetOverflow(overflow);
     }
 
     /// <summary>运行时替换 Grid 配置（Grid 仅支持定高，变高 + Grid 抛异常）。</summary>
     /// <param name="grid">新 Grid 配置。</param>
     public void SetGrid(VirtualListGridConfig grid)
     {
-        EnsureInitialized();
-        Core.SetGrid(grid);
+        var core = EnsureInitialized();
+        core.SetGrid(grid);
         ApplyContentPosition();
     }
 
@@ -304,8 +304,8 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="alignment">对齐方式。</param>
     public void ScrollToIndex(int index, ScrollAlignment alignment)
     {
-        EnsureInitialized();
-        Core.ScrollToIndex(index, alignment);
+        var core = EnsureInitialized();
+        core.ScrollToIndex(index, alignment);
         ApplyContentPosition();
     }
 
@@ -313,56 +313,56 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="offset">目标偏移。</param>
     public void ScrollToOffset(float offset)
     {
-        EnsureInitialized();
-        Core.ScrollToOffset(offset);
+        var core = EnsureInitialized();
+        core.ScrollToOffset(offset);
         ApplyContentPosition();
     }
 
     /// <summary>滚动到逻辑起点（第一个元素；反向列表滚到物理末端）。</summary>
     public void ScrollToStart()
     {
-        EnsureInitialized();
-        Core.ScrollToStart();
+        var core = EnsureInitialized();
+        core.ScrollToStart();
         ApplyContentPosition();
     }
 
     /// <summary>滚动到逻辑终点（最后一个元素；反向列表滚到物理起点）。</summary>
     public void ScrollToEnd()
     {
-        EnsureInitialized();
-        Core.ScrollToEnd();
+        var core = EnsureInitialized();
+        core.ScrollToEnd();
         ApplyContentPosition();
     }
 
     /// <summary>滚动到物理主轴向起点（垂直=顶、水平=左）。</summary>
     public void ScrollToTop()
     {
-        EnsureInitialized();
-        Core.ScrollToTop();
+        var core = EnsureInitialized();
+        core.ScrollToTop();
         ApplyContentPosition();
     }
 
     /// <summary>滚动到物理主轴向终点（垂直=底、水平=右）。</summary>
     public void ScrollToBottom()
     {
-        EnsureInitialized();
-        Core.ScrollToBottom();
+        var core = EnsureInitialized();
+        core.ScrollToBottom();
         ApplyContentPosition();
     }
 
     /// <summary>滚动到物理主轴向起点（水平=左、垂直=顶）。</summary>
     public void ScrollToLeft()
     {
-        EnsureInitialized();
-        Core.ScrollToLeft();
+        var core = EnsureInitialized();
+        core.ScrollToLeft();
         ApplyContentPosition();
     }
 
     /// <summary>滚动到物理主轴向终点（水平=右、垂直=底）。</summary>
     public void ScrollToRight()
     {
-        EnsureInitialized();
-        Core.ScrollToRight();
+        var core = EnsureInitialized();
+        core.ScrollToRight();
         ApplyContentPosition();
     }
 
@@ -383,24 +383,24 @@ public sealed class VirtualListMono : MonoBehaviour,
     /// <param name="localPos">视口本地坐标。</param>
     public void HandlePointerDown(Vector2 localPos)
     {
-        EnsureInitialized();
-        Core.HandlePointerDown(MainComponent(localPos));
+        var core = EnsureInitialized();
+        core.HandlePointerDown(MainComponent(localPos));
     }
 
     /// <summary>指针拖动（纯数值入口）。</summary>
     /// <param name="localPos">视口本地坐标。</param>
     public void HandlePointerDrag(Vector2 localPos)
     {
-        EnsureInitialized();
-        Core.HandlePointerDrag(MainComponent(localPos));
+        var core = EnsureInitialized();
+        core.HandlePointerDrag(MainComponent(localPos));
     }
 
     /// <summary>指针松手（纯数值入口）。</summary>
     /// <param name="localPos">视口本地坐标。</param>
     public void HandlePointerUp(Vector2 localPos)
     {
-        EnsureInitialized();
-        Core.HandlePointerUp(MainComponent(localPos));
+        var core = EnsureInitialized();
+        core.HandlePointerUp(MainComponent(localPos));
     }
 
     /// <summary>诊断快照（转发核心公开诊断接口）。</summary>
@@ -410,12 +410,14 @@ public sealed class VirtualListMono : MonoBehaviour,
         return Core != null ? Core.Snapshot() : default;
     }
 
-    private void EnsureInitialized()
+    private VirtualListCore EnsureInitialized()
     {
         if (!Initialized)
         {
             Initialize();
         }
+
+        return Core!;
     }
 
     private void SetupContent()
@@ -432,7 +434,7 @@ public sealed class VirtualListMono : MonoBehaviour,
 
     private void EnsureMask()
     {
-        if (_config.MaskViewport && GetComponent<RectMask2D>() == null)
+        if (_config!.MaskViewport && GetComponent<RectMask2D>() == null)
         {
             gameObject.AddComponent<RectMask2D>();
         }
@@ -445,7 +447,7 @@ public sealed class VirtualListMono : MonoBehaviour,
             return;
         }
 
-        var prefabRect = _itemPrefab.GetComponent<RectTransform>();
+        var prefabRect = _itemPrefab!.GetComponent<RectTransform>();
         if (prefabRect == null)
         {
             return;
@@ -456,7 +458,7 @@ public sealed class VirtualListMono : MonoBehaviour,
             : prefabRect.rect.width;
         if (size > 0f)
         {
-            Core.SetDefaultItemSize(size);
+            Core!.SetDefaultItemSize(size);
         }
     }
 
@@ -467,7 +469,7 @@ public sealed class VirtualListMono : MonoBehaviour,
             return;
         }
 
-        var rect = _viewport.rect;
+        var rect = _viewport!.rect;
         if (Axis == VirtualListAxis.Vertical)
         {
             Core.SetViewportSize(rect.height, rect.width);
@@ -495,7 +497,7 @@ public sealed class VirtualListMono : MonoBehaviour,
                 : new Vector2(-offset, 0f);
         }
 
-        var rect = _viewport.rect;
+        var rect = _viewport!.rect;
         var size = Axis == VirtualListAxis.Vertical
             ? new Vector2(rect.width, snapshot.ContentSize)
             : new Vector2(snapshot.ContentSize, rect.height);
@@ -509,7 +511,7 @@ public sealed class VirtualListMono : MonoBehaviour,
 
     private float MainComponent(Vector2 localPos)
     {
-        var rect = _viewport.rect;
+        var rect = _viewport!.rect;
         return Axis == VirtualListAxis.Vertical
             ? rect.yMax - localPos.y
             : localPos.x - rect.xMin;
@@ -518,7 +520,7 @@ public sealed class VirtualListMono : MonoBehaviour,
     private bool TryToLocal(PointerEventData eventData, out Vector2 local)
     {
         return RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            _viewport,
+            _viewport!,
             eventData.position,
             eventData.pressEventCamera,
             out local);

@@ -14,7 +14,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
         <AssemblyName>Fenestra.Unity</AssemblyName>
         <RootNamespace>Fenestra.Unity</RootNamespace>
         <!-- CS0649：Unity 序列化字段由 Inspector 赋值，编译器无法感知，属预期。 -->

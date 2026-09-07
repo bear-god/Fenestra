@@ -11,11 +11,11 @@ internal sealed class StubItemProvider : IItemProvider
 {
     private readonly Func<int, IItemView> _factory;
     private readonly Stack<IItemView> _pool = new();
-    private Func<CancellationToken, UniTask<IItemView>> _manualGet;
+    private Func<CancellationToken, UniTask<IItemView>>? _manualGet;
 
     /// <summary>初始化桩 Provider。</summary>
     /// <param name="factory">视图工厂（参数为创建序号）。</param>
-    public StubItemProvider(Func<int, IItemView> factory = null)
+    public StubItemProvider(Func<int, IItemView>? factory = null)
     {
         _factory = factory ?? (i => new StubItemView());
     }

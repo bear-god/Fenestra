@@ -29,13 +29,13 @@ public sealed class VirtualListCore : IDisposable
     private readonly Subject<Unit> _reachedTop = new();
     private readonly Dictionary<int, bool> _shownState = new();
     private readonly Subject<VisibleWindow> _visibleWindowChanged = new();
-    private IDisposable _collectionSubscriptions;
+    private IDisposable? _collectionSubscriptions;
     private VirtualListConfig _config;
 
-    private Func<int> _countAccessor;
+    private Func<int>? _countAccessor;
     private bool _disposed;
     private bool _isVariableSize;
-    private Func<int, object> _itemAccessor;
+    private Func<int, object>? _itemAccessor;
     private float _lastOffset;
     private VisibleWindow _lastWindow = new(-1, -1);
     private int _reconcileDepth;
@@ -45,7 +45,7 @@ public sealed class VirtualListCore : IDisposable
     /// <param name="config">列表配置。</param>
     /// <param name="provider">元素提供者。</param>
     /// <param name="logger">日志（可空，默认 Null 实现）。</param>
-    public VirtualListCore(VirtualListConfig config, IItemProvider provider, IVirtualListLogger logger = null)
+    public VirtualListCore(VirtualListConfig config, IItemProvider provider, IVirtualListLogger? logger = null)
     {
         if (provider is null)
         {
@@ -108,7 +108,7 @@ public sealed class VirtualListCore : IDisposable
 
         var captured = collection;
         _countAccessor = () => captured.Count;
-        _itemAccessor = i => captured[i];
+        _itemAccessor = i => captured[i]!;
         _layout.SetItemCount(captured.Count);
         ApplyInitialOffset();
 
@@ -445,7 +445,7 @@ public sealed class VirtualListCore : IDisposable
 
         if (_activeViews.TryGetValue(index, out var view))
         {
-            view.Bind(_itemAccessor(index), index);
+            view.Bind(_itemAccessor!(index), index);
             if (_isVariableSize)
             {
                 _layout.InvalidateMeasuredSize(index);
@@ -477,7 +477,7 @@ public sealed class VirtualListCore : IDisposable
         }
 
         // 集合缩容后超出新 count 的活跃 index 已无对应数据：跳过重绑，由窗口 diff 将其归还。
-        var count = _countAccessor();
+        var count = _countAccessor!();
         foreach (var pair in _activeViews)
         {
             var index = pair.Key;
@@ -605,7 +605,7 @@ public sealed class VirtualListCore : IDisposable
             }
 
             _activeViews[index] = view;
-            view.Bind(_itemAccessor(index), index);
+            view.Bind(_itemAccessor!(index), index);
             if (_isVariableSize)
             {
                 var measured = view.Measure(_config.Axis);

@@ -57,7 +57,7 @@ public abstract class VirtualListCoreTestBase
         }
 
         Assert.Fail($"找不到 BoundIndex={index} 的视图");
-        return null;
+        return null!;
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public abstract class VirtualListCoreTestBase
     /// </summary>
     /// <param name="heights">按索引的高度表。</param>
     /// <returns>编排器与桩依赖（Provider/日志）。</returns>
-    internal (VirtualListCore, StubItemProvider, StubLogger) CreateVariableList(float[] heights)
+    internal (VirtualListCore, StubItemProvider, StubLogger) CreateVariableList(float[]? heights)
     {
         var config = TestListFactory.VariableConfig();
         var provider = new StubItemProvider(_ => new StubItemView

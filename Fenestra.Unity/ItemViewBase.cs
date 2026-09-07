@@ -14,7 +14,7 @@ using UnityEngine;
 [RequireComponent(typeof(RectTransform))]
 public abstract class ItemViewBase : MonoBehaviour, IItemView
 {
-    private RectTransform _rect;
+    private RectTransform? _rect;
 
     private void Awake()
     {

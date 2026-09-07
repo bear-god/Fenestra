@@ -9,7 +9,7 @@ using Fenestra.Entity;
 internal sealed class StubItemView : IItemView
 {
     /// <summary>按索引提供测量高度的委托（优先于 MeasuredSize）。</summary>
-    public Func<int, float> HeightProvider { get; set; }
+    public Func<int, float>? HeightProvider { get; set; }
 
     /// <summary>默认测量高度。</summary>
     public float MeasuredSize { get; set; } = 100f;
@@ -33,7 +33,7 @@ internal sealed class StubItemView : IItemView
     public int UnbindCount { get; set; }
 
     /// <summary>最近绑定的数据。</summary>
-    public object BoundItem { get; set; }
+    public object? BoundItem { get; set; }
 
     /// <summary>最近绑定的索引。</summary>
     public int BoundIndex { get; set; }

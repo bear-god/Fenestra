@@ -4,13 +4,13 @@
         <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
         <AssemblyName>Fenestra</AssemblyName>
         <RootNamespace>Fenestra</RootNamespace>
 
         <!-- NuGet 包元数据（dotnet pack / 发布用）。 -->
         <PackageId>Fenestra</PackageId>
-        <Version>1.0.0</Version>
+        <Version>0.0.1</Version>
         <Authors>Fenestra</Authors>
         <Description>Engine-agnostic virtualized list/grid core: instantiates only the visible window (plus overscan); fixed/variable sizing, reverse layout, inertia and elastic overflow. Adapters: Fenestra.Unity (UGUI).</Description>
         <PackageTags>virtualization;virtual-list;scroll;list;grid</PackageTags>
