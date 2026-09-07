@@ -12,7 +12,7 @@
         <PackageId>Fenestra</PackageId>
         <Version>0.0.1</Version>
         <Authors>Fenestra</Authors>
-        <Description>Engine-agnostic virtualized list/grid core: instantiates only the visible window (plus overscan); fixed/variable sizing, reverse layout, inertia and elastic overflow. Adapters: Fenestra.Unity (UGUI).</Description>
+        <Description>Engine-agnostic virtualized list/grid core: instantiates only the visible window (plus overscan); fixed/variable sizing, reverse layout, inertia and elastic overflow.</Description>
         <PackageTags>virtualization;virtual-list;scroll;list;grid</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>

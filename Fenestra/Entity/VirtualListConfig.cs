@@ -2,7 +2,7 @@ namespace Fenestra.Entity;
 
 using System;
 
-/// <summary>列表配置（纯 C# 值对象，序列化 / Inspector 展示由 Unity 适配层负责）。</summary>
+/// <summary>列表配置（纯 C# 值对象，序列化 / Inspector 展示由宿主适配层负责）。</summary>
 [Serializable]
 public struct VirtualListConfig
 {

@@ -6,7 +6,7 @@ using Fenestra.Entity;
 /// 元素视图契约。由编排器统一驱动，调用顺序固定（见设计 §6.1）：
 /// 获取：Bind → Measure(变高) → SetPlacement → OnShow；释放：OnHide → OnUnbind → Return。
 /// 订阅清理责任在 OnUnbind（每次回收必调）；宿主组件 OnDestroy 兜底。
-/// 本接口为纯 C# 契约，不含任何引擎类型；Unity 侧由预制件组件实现。
+/// 本接口为纯 C# 契约，不含任何引擎类型；引擎侧由宿主实现。
 /// </summary>
 public interface IItemView
 {
@@ -20,14 +20,14 @@ public interface IItemView
 
     /// <summary>
     /// 同步测量主轴尺寸（变高模式）。
-    /// 必须确定、同步、无 UGUI 布局重建依赖（自算尺寸，如文本高度）。
+    /// 必须确定、同步、无引擎布局重建依赖（自算尺寸，如文本高度）。
     /// 传入滚动主轴：纵向返回高度、横向返回宽度（轴向可在运行时经 <c>ApplyConfig</c> 改变）。
     /// </summary>
     /// <param name="axis">当前滚动主轴。</param>
     /// <returns>主轴尺寸。</returns>
     float Measure(VirtualListAxis axis);
 
-    /// <summary>以纯数值摆放元素（位置 + 尺寸）。Unity 端实现为设置 RectTransform。</summary>
+    /// <summary>以纯数值摆放元素（位置 + 尺寸）。引擎端实现为设置变换。</summary>
     /// <param name="placement">摆放参数。</param>
     void SetPlacement(ItemPlacement placement);
 

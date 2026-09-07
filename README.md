@@ -4,7 +4,7 @@
 
 纯 C# 的虚拟列表核心库：只实例化可见窗口内（含过扫描）的元素，支持定高 / 变高、List / Grid、反向排列、惯性滚动与弹性回弹。
 
-核心层 **不依赖任何引擎**，可 headless 运行；Unity、Godot 等宿主通过各自的适配层接入，核心只暴露纯 C# 契约与数值接口。
+核心层 **不依赖任何引擎**，可 headless 运行；引擎宿主需自行实现适配层，核心只暴露纯 C# 契约与数值接口。
 
 ## 特性
 
@@ -21,7 +21,7 @@
 
 ## 安装
 
-引用 `Fenestra.csproj` 或通过 NuGet 引入 `Fenestra`（核心）、`Fenestra.Unity`（Unity 适配）。依赖：
+引用 `Fenestra.csproj` 或通过 NuGet 引入 `Fenestra`。依赖：
 
 - [R3](https://github.com/Cysharp/R3)
 - [UniTask](https://github.com/Cysharp/UniTask)
@@ -165,14 +165,6 @@ DebugSnapshot s = list.Snapshot();
 // s.Offset / s.ContentSize / s.MaxScrollOffset / s.InstantiatedCount
 ```
 
-## Unity 适配
-
-`Fenestra.Unity`（UGUI）提供自包含的 `VirtualListMono`：
-
-- 挂到列表节点，在 Inspector 配置 `VirtualListMonoConfig` 与 item 预制件，然后 `Bind(collection)`
-- 内部自动创建 content、挂裁剪、每帧驱动 `Step`、转发指针事件，并自带对象复用提供者
-- item 预制件根节点继承 `ItemViewBase`（已实现 `SetPlacement` 落地），只需实现 `Bind` 数据填充
-
 ## 运行测试
 
 ```bash
@@ -190,7 +182,6 @@ Fenestra/
 │   ├── Abstraction/           # IItemView / IItemProvider / IVirtualListLogger
 │   ├── Entity/                # 配置、枚举、快照等值对象
 │   └── Core/                  # 布局与滚动物理（内部实现）
-├── Fenestra.Unity/            # Unity (UGUI) 适配层：VirtualListMono / ItemViewBase
 └── Fenestra.Tests/            # NUnit 测试
 ```
 

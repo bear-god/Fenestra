@@ -1,5 +1,4 @@
 <Solution>
     <Project Path="Fenestra/Fenestra.csproj"/>
     <Project Path="Fenestra.Tests/Fenestra.Tests.csproj"/>
-    <Project Path="Fenestra.Unity/Fenestra.Unity.csproj"/>
 </Solution>

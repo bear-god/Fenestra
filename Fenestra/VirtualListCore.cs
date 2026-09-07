@@ -12,7 +12,7 @@ using R3;
 
 /// <summary>
 /// 虚拟列表编排器（纯 C#，无引擎依赖）：集合绑定、窗口管理、元素生命周期、滚动/输入/尺寸入口、R3 事件流。
-/// 由宿主驱动：Unity 视图壳转发指针/尺寸/tick，测试直接调用。可 headless 运行（设计 D11）。
+/// 由宿主驱动：引擎视图壳转发指针/尺寸/tick，测试直接调用。可 headless 运行（设计 D11）。
 /// 唯一测试与使用入口（设计 D14）。
 /// </summary>
 public sealed class VirtualListCore : IDisposable
