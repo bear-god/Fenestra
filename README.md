@@ -24,7 +24,6 @@
 引用 `Fenestra.csproj` 或通过 NuGet 引入 `Fenestra`。依赖：
 
 - [R3](https://github.com/Cysharp/R3)
-- [UniTask](https://github.com/Cysharp/UniTask)
 - [ObservableCollections](https://github.com/Cysharp/ObservableCollections)（及其 `R3` 绑定包）
 
 ## 快速上手
@@ -70,8 +69,8 @@ public sealed class MyItemProvider : IItemProvider
 {
     private readonly Stack<MyItemView> _pool = new();
 
-    public UniTask<IItemView> GetAsync(CancellationToken ct) =>
-        UniTask.FromResult<IItemView>(_pool.Count > 0 ? _pool.Pop() : new MyItemView());
+    public ValueTask<IItemView> GetAsync(CancellationToken ct) =>
+        ValueTask.FromResult<IItemView>(_pool.Count > 0 ? _pool.Pop() : new MyItemView());
 
     public void Return(IItemView view) => _pool.Push((MyItemView)view);
 }

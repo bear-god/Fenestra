@@ -3,7 +3,7 @@ namespace Fenestra.Tests;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using Fenestra.Abstraction;
 
 /// <summary>桩 Provider：记录取还次数、活跃集合、全部创建视图，复用视图（模拟对象池）。</summary>
@@ -11,7 +11,7 @@ internal sealed class StubItemProvider : IItemProvider
 {
     private readonly Func<int, IItemView> _factory;
     private readonly Stack<IItemView> _pool = new();
-    private Func<CancellationToken, UniTask<IItemView>>? _manualGet;
+    private Func<CancellationToken, ValueTask<IItemView>>? _manualGet;
 
     /// <summary>初始化桩 Provider。</summary>
     /// <param name="factory">视图工厂（参数为创建序号）。</param>
@@ -33,24 +33,24 @@ internal sealed class StubItemProvider : IItemProvider
     public List<IItemView> Created { get; } = new();
 
     /// <summary>手动完成模式下尚未完成（仍挂起）的获取请求。</summary>
-    public List<UniTaskCompletionSource<IItemView>> PendingGets { get; } = new();
+    public List<TaskCompletionSource<IItemView>> PendingGets { get; } = new();
 
     /// <summary>
-    /// 启用手动完成模式：GetAsync 返回未完成的 UniTask，由用例通过 <see cref="PendingGets" /> 逐个完成。
+    /// 启用手动完成模式：GetAsync 返回未完成的 ValueTask，由用例通过 <see cref="PendingGets" /> 逐个完成。
     /// 用于测未预热（GetAsync 未完成）路径。
     /// </summary>
     public void SetManualGet()
     {
         _manualGet = _ =>
         {
-            var pending = new UniTaskCompletionSource<IItemView>();
+            var pending = new TaskCompletionSource<IItemView>();
             PendingGets.Add(pending);
-            return pending.Task;
+            return new ValueTask<IItemView>(pending.Task);
         };
     }
 
     /// <inheritdoc />
-    public UniTask<IItemView> GetAsync(CancellationToken ct)
+    public ValueTask<IItemView> GetAsync(CancellationToken ct)
     {
         GetCount++;
         if (_manualGet is not null)
@@ -60,7 +60,7 @@ internal sealed class StubItemProvider : IItemProvider
 
         var view = _pool.Count > 0 ? _pool.Pop() : CreateNew();
         Active.Add(view);
-        return UniTask.FromResult(view);
+        return ValueTask.FromResult(view);
     }
 
     /// <inheritdoc />

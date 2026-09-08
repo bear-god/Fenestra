@@ -3,7 +3,7 @@ namespace Fenestra;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using Fenestra.Abstraction;
 using Fenestra.Core;
 using Fenestra.Entity;
@@ -528,10 +528,10 @@ public sealed class VirtualListCore : IDisposable
             return;
         }
 
-        ReconcileAsync().Forget();
+        _ = ReconcileAsync();
     }
 
-    private async UniTaskVoid ReconcileAsync()
+    private async ValueTask ReconcileAsync()
     {
         if (_disposed)
         {
@@ -584,7 +584,7 @@ public sealed class VirtualListCore : IDisposable
         }
     }
 
-    private async UniTask<bool> AcquireEnteringAsync(WindowDiff diff)
+    private async ValueTask<bool> AcquireEnteringAsync(WindowDiff diff)
     {
         var any = false;
         for (var i = 0; i < diff.EnteringCount; i++)
